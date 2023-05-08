@@ -4,8 +4,10 @@ import client.SerializationClient;
 import client.TCPClient;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 import java.util.Set;
 
 public class ClientGUI {
@@ -16,8 +18,9 @@ public class ClientGUI {
 //    private static final int CHAT_AREA_WIDTH = 15;
 //    private static final int MESSAGE_SIZE = 40;
     private final TCPClient client;
+    private String name = null;
     private final JFrame frame = new JFrame("My chat");
-    private ClientGUIForm clientPanel;
+    private final ClientGUIForm clientPanel;
 //    private final JTextArea chat = new JTextArea(CHAT_AREA_HEIGHT, CHAT_AREA_WIDTH);
 //    private final JTextArea participants = new JTextArea(PARTICIPANTS_AREA_HEIGHT, PARTICIPANTS_AREA_WIDTH);
 //    private final JTextField message = new JTextField(MESSAGE_SIZE);
@@ -80,6 +83,8 @@ public class ClientGUI {
 //        frame.setVisible(true);
     }
 
+    public void setName(String _name) {name = _name;}
+
     public String getUserName() {
         String name = JOptionPane.showInputDialog(frame, "Enter your name:", JOptionPane.QUESTION_MESSAGE);
         if (name == null) return "";
@@ -95,13 +100,19 @@ public class ClientGUI {
     public void showInfo(String text) {
         JOptionPane.showMessageDialog(frame, text, "INFO", JOptionPane.INFORMATION_MESSAGE);
     }
-    public void addMessage(String msg) {
-        clientPanel.chat.append(msg + "\n");
+    public void addMessage(String sender, String text) {
+        if (name != null && Objects.equals(sender, name)) {
+            clientPanel.chat.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        } else {
+            clientPanel.chat.setAlignmentX(Component.LEFT_ALIGNMENT);
+        }
+        clientPanel.chat.append(sender + " : " + text + "\n");
+        clientPanel.chat.revalidate();
     }
     public void updateUsers(Set<String> users) {
         StringBuilder sb = new StringBuilder();
         if (client.isConnected()) {
-            sb.append("Participants:");
+            sb.append("Participants:\n");
             for (String user : users) {
                 sb.append(user).append('\n');
             }

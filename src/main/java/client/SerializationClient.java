@@ -11,6 +11,7 @@ import java.net.Socket;
 
 public class SerializationClient implements TCPClient {
     private volatile boolean isConnected = false;
+    private String name;
     Connection connection;
     ClientModel model;
     ClientGUI gui;
@@ -45,6 +46,7 @@ public class SerializationClient implements TCPClient {
         while (true) {
             if (isConnected) {
                 registrateNewUser();
+                gui.setName(name);
                 receiveMessage();
                 isConnected = false;
             }
@@ -78,7 +80,7 @@ public class SerializationClient implements TCPClient {
     @Override
     public void sendMessage(String msg) {
         try {
-            connection.sendMessage(new Message(msg, MessageType.TEXT_MESSAGE));
+            connection.sendMessage(new Message(name, msg, MessageType.TEXT_MESSAGE));
         }
         catch (IOException e) {
             gui.showError("Error while sending text message");
@@ -93,7 +95,7 @@ public class SerializationClient implements TCPClient {
             try {
                 Message msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                    gui.addMessage(msg.getText());
+                    gui.addMessage(msg.getSender(), msg.getText());
                 } else if (msg.getType() == MessageType.ADD_USER) {
                     model.addUser(msg.getText());
                     gui.updateUsers(model.getUsers());
@@ -118,17 +120,18 @@ public class SerializationClient implements TCPClient {
             try {
                 Message msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.REQUEST_USER_NAME) {
-                    String userName = gui.getUserName();
-                    connection.sendMessage(new Message(userName, MessageType.REPLY_USER_NAME));
+                    name = gui.getUserName();
+                    connection.sendMessage(new Message(name, name,  MessageType.REPLY_USER_NAME));
                 }
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");
-                    String userName = gui.getUserName();
-                    connection.sendMessage(new Message(userName, MessageType.REPLY_USER_NAME));
+                    name = gui.getUserName();
+                    connection.sendMessage(new Message(name, name,  MessageType.REPLY_USER_NAME));
                 }
                 if (msg.getType() == MessageType.NAME_ACCEPTED) {
-                    model.addUser(msg.getText());
+                    //model.addUser(msg.getText());
                     gui.showInfo("Name is accepted!");
+                    model.setUsers(msg.getUsers());
                     break;
                 }
             }

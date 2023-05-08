@@ -8,8 +8,6 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Locale;
 
 public class ClientGUIForm {
@@ -25,26 +23,17 @@ public class ClientGUIForm {
 
     public ClientGUIForm(TCPClient _client) {
         client = _client;
-        disconnectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ClientGUIForm.this.client.disconnect();
-                disconnectButton.setFocusable(false);
-            }
+        disconnectButton.addActionListener(e -> {
+            ClientGUIForm.this.client.disconnect();
+            disconnectButton.setFocusable(false);
         });
-        connectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ClientGUIForm.this.client.connect();
-                connectButton.setFocusable(false);
-            }
+        connectButton.addActionListener(e -> {
+            ClientGUIForm.this.client.connect();
+            connectButton.setFocusable(false);
         });
-        message.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ClientGUIForm.this.client.sendMessage(message.getText());
-                message.setText("");
-            }
+        message.addActionListener(e -> {
+            ClientGUIForm.this.client.sendMessage(message.getText());
+            message.setText("");
         });
     }
 
@@ -71,22 +60,6 @@ public class ClientGUIForm {
         panel.setEnabled(false);
         Font panelFont = this.$$$getFont$$$("JetBrains Mono ExtraBold", -1, 12, panel.getFont());
         if (panelFont != null) panel.setFont(panelFont);
-        chat = new JTextArea();
-        chat.setBackground(new Color(-4473925));
-        chat.setEditable(false);
-        Font chatFont = this.$$$getFont$$$("Arial Black", -1, 16, chat.getFont());
-        if (chatFont != null) chat.setFont(chatFont);
-        chat.setForeground(new Color(-16777216));
-        chat.setText("");
-        panel.add(chat, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(400, 600), new Dimension(400, 600), null, 0, false));
-        participants = new JTextArea();
-        participants.setBackground(new Color(-5787085));
-        participants.setDisabledTextColor(new Color(-1719838));
-        participants.setEditable(false);
-        Font participantsFont = this.$$$getFont$$$("Arial Black", -1, 14, participants.getFont());
-        if (participantsFont != null) participants.setFont(participantsFont);
-        participants.setForeground(new Color(-16777216));
-        panel.add(participants, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         connectButton = new JButton();
         connectButton.setBackground(new Color(-14830824));
         connectButton.setBorderPainted(false);
@@ -127,6 +100,29 @@ public class ClientGUIForm {
         if (messageFont != null) message.setFont(messageFont);
         message.setForeground(new Color(-16777216));
         panel.add(message, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        panel.add(scrollPane1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(400, 600), new Dimension(400, 600), null, 0, false));
+        chat = new JTextArea();
+        chat.setBackground(new Color(-4473925));
+        chat.setEditable(false);
+        Font chatFont = this.$$$getFont$$$("Arial Black", -1, 16, chat.getFont());
+        if (chatFont != null) chat.setFont(chatFont);
+        chat.setForeground(new Color(-16777216));
+        chat.setMaximumSize(new Dimension(-1, -1));
+        chat.setMinimumSize(new Dimension(400, 600));
+        scrollPane1.setViewportView(chat);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        panel.add(scrollPane2, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        participants = new JTextArea();
+        participants.setBackground(new Color(-5787085));
+        participants.setEditable(false);
+        Font participantsFont = this.$$$getFont$$$("Arial Black", -1, 14, participants.getFont());
+        if (participantsFont != null) participants.setFont(participantsFont);
+        participants.setForeground(new Color(-16777216));
+        participants.setMaximumSize(new Dimension(-1, -1));
+        participants.setMinimumSize(new Dimension(-1, -1));
+        participants.setPreferredSize(new Dimension(150, 50));
+        scrollPane2.setViewportView(participants);
     }
 
     /**

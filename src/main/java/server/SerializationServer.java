@@ -44,8 +44,9 @@ public class SerializationServer implements TCPServer {
                             connection.sendMessage(new Message(MessageType.NAME_NOT_AVAILABLE));
                         } else {
                             model.addUser(newName, connection);
-                            connection.sendMessage(new Message(MessageType.NAME_ACCEPTED));
-                            broadcastMessage(new Message(newName, MessageType.ADD_USER));
+
+                            connection.sendMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers()));
+                            broadcastMessage(new Message(newName, newName, MessageType.ADD_USER));
                             return newName;
                         }
                     }
@@ -60,9 +61,9 @@ public class SerializationServer implements TCPServer {
                 try {
                     Message msg = connection.receiveMessage();
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                        broadcastMessage(new Message(name + " : " + msg.getText(), MessageType.TEXT_MESSAGE));
+                        broadcastMessage(new Message(name, msg.getText(), MessageType.TEXT_MESSAGE));
                     } else if (msg.getType() == MessageType.DISCONNECT_USER) {
-                        broadcastMessage(new Message(name, MessageType.DELETE_USER));
+                        broadcastMessage(new Message(name, name, MessageType.DELETE_USER));
                         connection.close();
                         model.deleteUser(name);
                         gui.showInfo("User " + name + " left the chat");
