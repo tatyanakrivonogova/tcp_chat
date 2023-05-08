@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="client.gui.ClientGUIForm">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="61" y="141" width="564" height="709"/>
+    </constraints>
+    <properties>
+      <autoscrolls value="false"/>
+      <background color="-4941447"/>
+      <doubleBuffered value="true"/>
+      <enabled value="false"/>
+      <font name="JetBrains Mono ExtraBold" size="12"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="8cfe7" class="javax.swing.JTextArea" binding="chat">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="400" height="600"/>
+            <preferred-size width="400" height="600"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-4473925"/>
+          <editable value="false"/>
+          <font name="Arial Black" size="16"/>
+          <foreground color="-16777216"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="afbd1" class="javax.swing.JTextArea" binding="participants">
+        <constraints>
+          <grid row="1" column="0" row-span="2" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-5787085"/>
+          <disabledTextColor color="-1719838"/>
+          <editable value="false"/>
+          <font name="Arial Black" size="14"/>
+          <foreground color="-16777216"/>
+        </properties>
+      </component>
+      <component id="26c47" class="javax.swing.JButton" binding="connectButton">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-14830824"/>
+          <borderPainted value="false"/>
+          <contentAreaFilled value="true"/>
+          <defaultCapable value="true"/>
+          <doubleBuffered value="true"/>
+          <font name="Arial Black"/>
+          <foreground color="-1"/>
+          <hideActionText value="true"/>
+          <rolloverEnabled value="true"/>
+          <text value="CONNECT"/>
+        </properties>
+      </component>
+      <component id="a848c" class="javax.swing.JButton" binding="disconnectButton">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-14778954"/>
+          <borderPainted value="false"/>
+          <contentAreaFilled value="true"/>
+          <font name="Arial Black"/>
+          <foreground color="-7"/>
+          <selected value="true"/>
+          <text value="DISCONNECT"/>
+        </properties>
+      </component>
+      <component id="5183d" class="javax.swing.JTextField" binding="IPAddressField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <autoscrolls value="false"/>
+          <background color="-2514655"/>
+          <foreground color="-16777216"/>
+        </properties>
+      </component>
+      <component id="ee498" class="javax.swing.JTextField" binding="portField">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <autoscrolls value="false"/>
+          <background color="-2514655"/>
+          <foreground color="-16777216"/>
+        </properties>
+      </component>
+      <component id="f017a" class="javax.swing.JTextField" binding="message">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <editable value="true"/>
+          <font name="Droid Sans Mono Slashed"/>
+          <foreground color="-16777216"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
