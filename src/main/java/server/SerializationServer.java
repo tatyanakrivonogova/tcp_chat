@@ -32,6 +32,7 @@ public class SerializationServer implements TCPServer {
                 Connection connection = new Connection(socket);
                 String name = addClient(connection);
                 gui.showInfo("User " + name + " joined the chat");
+                logger.log(Level.INFO, "User " + name + " joined the chat");
                 chatting(connection, name);
             } catch (IOException e) {
                 gui.showError("Error while adding new user");
@@ -70,11 +71,13 @@ public class SerializationServer implements TCPServer {
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
                         model.addHistory(msg);
                         broadcastMessage(new Message(DateTime.now().toString(), name, msg.getText(), MessageType.TEXT_MESSAGE));
+                        logger.log(Level.INFO, "Message from " + name);
                     } else if (msg.getType() == MessageType.DISCONNECT_USER) {
                         broadcastMessage(new Message(DateTime.now().toString(), name, name, MessageType.DELETE_USER));
                         connection.close();
                         model.deleteUser(name);
                         gui.showInfo("User " + name + " left the chat");
+                        logger.log(Level.INFO, "User " + name + " left the chat");
                         break;
                     }
                 } catch (Exception e) {
@@ -141,19 +144,15 @@ public class SerializationServer implements TCPServer {
 
     @Override
     public void acceptClient() {
-        while (true) {
-            if (!serverSocket.isClosed() && isRunning) {//................................
-                try {
-                    Socket newSocket = serverSocket.accept();
-                    ServerThread thread = new ServerThread(newSocket);
-                    thread.start();
-                } catch (IOException e) {
-                    gui.showError("Error while accepting new socket");
-                    logger.log(Level.ERROR, "Error while accepting new socket");
-                    logger.log(Level.ERROR, e.getMessage());
-                    e.printStackTrace();
-                    break;
-                }
+        try {
+            Socket newSocket = serverSocket.accept();
+            ServerThread thread = new ServerThread(newSocket);
+            thread.start();
+        } catch (IOException e) {
+            if (isRunning) {
+                gui.showError("Error while accepting new socket");
+                logger.log(Level.ERROR, "Error while accepting new socket");
+                logger.log(Level.ERROR, e.getMessage());
             }
         }
     }

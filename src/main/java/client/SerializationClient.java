@@ -10,7 +10,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.time.LocalDateTime;
 
-
 public class SerializationClient implements TCPClient {
     private volatile boolean isConnected = false;
     private String name;
@@ -22,9 +21,7 @@ public class SerializationClient implements TCPClient {
         if (!isConnected) {
             while (true) {
                 try {
-                    //InetAddress IPAddress = InetAddress.getByName("localhost");
                     InetAddress ipAddress = InetAddress.getByName(gui.getAddress());
-                    //int port = 2048;
                     int port = gui.getPort();
                     Socket s = new Socket(ipAddress, port);
                     connection = new Connection(s);
@@ -151,6 +148,6 @@ public class SerializationClient implements TCPClient {
         }
     }
     private String getTime() {
-        return LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute();
+        return LocalDateTime.now().getHour() + ":" + (LocalDateTime.now().getMinute() > 9 ? LocalDateTime.now().getMinute() : "0" + LocalDateTime.now().getMinute());
     }
 }

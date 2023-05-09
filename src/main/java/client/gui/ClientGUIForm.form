@@ -82,6 +82,8 @@
         <properties>
           <background color="-1"/>
           <editable value="true"/>
+          <focusCycleRoot value="false"/>
+          <focusTraversalPolicyProvider value="false"/>
           <font name="Droid Sans Mono Slashed"/>
           <foreground color="-16777216"/>
         </properties>
