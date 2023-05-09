@@ -8,10 +8,12 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.net.InetAddress;
 import java.util.Locale;
 
 public class ClientGUIForm {
     private final TCPClient client;
+    private final ClientGUI gui;
     public JPanel panel;
     public JTextArea chat;
     public JTextArea participants;
@@ -21,7 +23,8 @@ public class ClientGUIForm {
     private JTextField portField;
     private JTextField message;
 
-    public ClientGUIForm(TCPClient _client) {
+    public ClientGUIForm(ClientGUI _gui, TCPClient _client) {
+        gui = _gui;
         client = _client;
         disconnectButton.addActionListener(e -> {
             ClientGUIForm.this.client.disconnect();
@@ -32,9 +35,21 @@ public class ClientGUIForm {
             connectButton.setFocusable(false);
         });
         message.addActionListener(e -> {
-            ClientGUIForm.this.client.sendMessage(message.getText());
+            if (client.isConnected()) {
+                ClientGUIForm.this.client.sendMessage(message.getText());
+            } else {
+                gui.showWarning("Connection is not established");
+            }
             message.setText("");
         });
+    }
+
+    public void setPort(int port) {
+        portField.setText("PORT : " + port);
+    }
+
+    public void setIpAddress(InetAddress ip) {
+        IPAddressField.setText("IP address : " + ip);
     }
 
     {
@@ -86,11 +101,13 @@ public class ClientGUIForm {
         IPAddressField = new JTextField();
         IPAddressField.setAutoscrolls(false);
         IPAddressField.setBackground(new Color(-2514655));
+        IPAddressField.setEditable(false);
         IPAddressField.setForeground(new Color(-16777216));
         panel.add(IPAddressField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         portField = new JTextField();
         portField.setAutoscrolls(false);
         portField.setBackground(new Color(-2514655));
+        portField.setEditable(false);
         portField.setForeground(new Color(-16777216));
         panel.add(portField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         message = new JTextField();
@@ -154,7 +171,4 @@ public class ClientGUIForm {
         return panel;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }

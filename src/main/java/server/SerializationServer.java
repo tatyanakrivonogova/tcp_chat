@@ -3,6 +3,10 @@ package server;
 import connection.Connection;
 import message.Message;
 import message.MessageType;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import server.gui.ServerGUI;
 import server.model.ServerModel;
 
@@ -12,11 +16,11 @@ import java.net.Socket;
 import java.util.Map;
 
 public class SerializationServer implements TCPServer {
+    private static final Logger logger = LogManager.getLogger(SerializationServer.class);
     private ServerSocket serverSocket;
     private ServerModel model;
     private ServerGUI gui;
     private volatile boolean isRunning = false;
-
     private class ServerThread extends Thread {
         private final Socket socket;
         public ServerThread(Socket _socket) {
@@ -31,6 +35,8 @@ public class SerializationServer implements TCPServer {
                 chatting(connection, name);
             } catch (IOException e) {
                 gui.showError("Error while adding new user");
+                logger.log(Level.ERROR, "Error while adding new user");
+                logger.log(Level.ERROR, e.getMessage());
             }
         }
         private String addClient(Connection connection) {
@@ -44,15 +50,16 @@ public class SerializationServer implements TCPServer {
                             connection.sendMessage(new Message(MessageType.NAME_NOT_AVAILABLE));
                         } else {
                             model.addUser(newName, connection);
-
-                            connection.sendMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers()));
-                            broadcastMessage(new Message(newName, newName, MessageType.ADD_USER));
+                            connection.sendMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers(), model.getHistory()));
+                            broadcastMessage(new Message(DateTime.now().toString(), newName, newName, MessageType.ADD_USER));
                             return newName;
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                     gui.showError("Error while adding new client");
+                    logger.log(Level.ERROR, "Error while adding new client");
+                    logger.log(Level.ERROR, e.getMessage());
                 }
             }
         }
@@ -61,9 +68,10 @@ public class SerializationServer implements TCPServer {
                 try {
                     Message msg = connection.receiveMessage();
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                        broadcastMessage(new Message(name, msg.getText(), MessageType.TEXT_MESSAGE));
+                        model.addHistory(msg);
+                        broadcastMessage(new Message(DateTime.now().toString(), name, msg.getText(), MessageType.TEXT_MESSAGE));
                     } else if (msg.getType() == MessageType.DISCONNECT_USER) {
-                        broadcastMessage(new Message(name, name, MessageType.DELETE_USER));
+                        broadcastMessage(new Message(DateTime.now().toString(), name, name, MessageType.DELETE_USER));
                         connection.close();
                         model.deleteUser(name);
                         gui.showInfo("User " + name + " left the chat");
@@ -71,6 +79,8 @@ public class SerializationServer implements TCPServer {
                     }
                 } catch (Exception e) {
                     gui.showError("Error while chatting");
+                    logger.log(Level.ERROR, "Error while chatting");
+                    logger.log(Level.ERROR, e.getMessage());
                     break;
                 }
             }
@@ -89,42 +99,61 @@ public class SerializationServer implements TCPServer {
 
     @Override
     public void start(int port) {
-        try {
-            serverSocket = new ServerSocket(port);
-            isRunning = true;
-            gui.showInfo("Server started!");
-        } catch (IOException e) {
-            gui.showError("Error while starting server");
+        if (!isRunning) {
+            try {
+                serverSocket = new ServerSocket(port);
+                isRunning = true;
+                gui.showInfo("Server started!");
+                logger.log(Level.INFO, "Server started");
+            } catch (IOException e) {
+                gui.showError("Error while starting server");
+                logger.log(Level.ERROR, "Error while starting server");
+                logger.log(Level.ERROR, e.getMessage());
+            }
+        } else {
+            gui.showWarning("Server has already started");
         }
     }
 
     @Override
     public void stop() {
-        try {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                for (Map.Entry<String, Connection> entry : model.getServerUsers().entrySet()) {
-                    entry.getValue().close();
+        if (isRunning) {
+            try {
+                if (serverSocket != null && !serverSocket.isClosed()) {
+                    for (Map.Entry<String, Connection> entry : model.getServerUsers().entrySet()) {
+                        entry.getValue().close();
+                    }
+                    serverSocket.close();
+                    model.getServerUsers().clear();
+                    isRunning = false;
+                    gui.showInfo("Server stopped!");
+                    logger.log(Level.INFO, "Server stopped");
                 }
-                serverSocket.close();
-                model.getServerUsers().clear();
-                isRunning = false;
-                gui.showInfo("Server stopped!");
+            } catch (Exception e) {
+                gui.showError("Error while stopping server");
+                logger.log(Level.ERROR, "Error while stopping server");
+                logger.log(Level.ERROR, e.getMessage());
             }
-        } catch (Exception e) {
-            gui.showError("Error while stopping server");
+        } else {
+            gui.showWarning("Server has already stopped");
         }
     }
 
     @Override
     public void acceptClient() {
         while (true) {
-            try {
-                Socket newSocket = serverSocket.accept();
-                ServerThread thread = new ServerThread(newSocket);
-                thread.start();
-            } catch (IOException e) {
-                gui.showError("Error while accepting new socket");
-                break;
+            if (!serverSocket.isClosed() && isRunning) {//................................
+                try {
+                    Socket newSocket = serverSocket.accept();
+                    ServerThread thread = new ServerThread(newSocket);
+                    thread.start();
+                } catch (IOException e) {
+                    gui.showError("Error while accepting new socket");
+                    logger.log(Level.ERROR, "Error while accepting new socket");
+                    logger.log(Level.ERROR, e.getMessage());
+                    e.printStackTrace();
+                    break;
+                }
             }
         }
     }
@@ -136,8 +165,9 @@ public class SerializationServer implements TCPServer {
                 entry.getValue().sendMessage(msg);
             } catch (IOException e) {
                 gui.showError("Error while broadcasting");
+                logger.log(Level.ERROR, "Error while broadcasting");
+                logger.log(Level.ERROR, e.getMessage());
             }
         }
     }
-
 }

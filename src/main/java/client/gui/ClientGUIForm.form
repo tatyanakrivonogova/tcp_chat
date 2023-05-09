@@ -54,7 +54,9 @@
         <properties>
           <autoscrolls value="false"/>
           <background color="-2514655"/>
+          <editable value="false"/>
           <foreground color="-16777216"/>
+          <text value="IP address : "/>
         </properties>
       </component>
       <component id="ee498" class="javax.swing.JTextField" binding="portField">
@@ -66,7 +68,9 @@
         <properties>
           <autoscrolls value="false"/>
           <background color="-2514655"/>
+          <editable value="false"/>
           <foreground color="-16777216"/>
+          <text value="PORT : "/>
         </properties>
       </component>
       <component id="f017a" class="javax.swing.JTextField" binding="message">

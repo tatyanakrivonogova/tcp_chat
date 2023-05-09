@@ -1,14 +1,13 @@
 package server.model;
 
 import connection.Connection;
+import message.Message;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ServerModel {
-    Map<String, Connection> serverUsers = new HashMap<>();
+    private Map<String, Connection> serverUsers = new HashMap<>();
+    private final ArrayList<Message> history = new ArrayList<>();
     public void setServerUsers(Map<String, Connection> _serverUsers) {
         serverUsers = _serverUsers;
     }
@@ -27,5 +26,10 @@ public class ServerModel {
     }
     public void deleteUser(String name) {
         serverUsers.remove(name);
+    }
+    public ArrayList<Message> getHistory() { return history; }
+    public void addHistory(Message msg) {
+        if (history.size() == 5) history.remove(0);
+        history.add(msg);
     }
 }

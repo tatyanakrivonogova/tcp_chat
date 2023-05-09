@@ -26,7 +26,6 @@ public class Connection implements AutoCloseable {
 
     public Message receiveMessage() throws IOException, ClassNotFoundException {
         synchronized (ois) {
-            System.out.println(Message.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             return (Message) ois.readObject();
         }
     }

@@ -8,6 +8,8 @@ import message.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.time.LocalDateTime;
+
 
 public class SerializationClient implements TCPClient {
     private volatile boolean isConnected = false;
@@ -21,11 +23,14 @@ public class SerializationClient implements TCPClient {
             while (true) {
                 try {
                     //InetAddress IPAddress = InetAddress.getByName("localhost");
-                    InetAddress IPAddress = InetAddress.getByName(gui.getAddress());
+                    InetAddress ipAddress = InetAddress.getByName(gui.getAddress());
                     //int port = 2048;
-                    Socket s = new Socket(IPAddress, gui.getPort());
+                    int port = gui.getPort();
+                    Socket s = new Socket(ipAddress, port);
                     connection = new Connection(s);
                     isConnected = true;
+                    gui.setPort(port);
+                    gui.setIpAddress(ipAddress);
                     gui.showInfo("Connected successfully!");
                     break;
                 }
@@ -80,7 +85,7 @@ public class SerializationClient implements TCPClient {
     @Override
     public void sendMessage(String msg) {
         try {
-            connection.sendMessage(new Message(name, msg, MessageType.TEXT_MESSAGE));
+            connection.sendMessage(new Message(getTime(), name, msg, MessageType.TEXT_MESSAGE));
         }
         catch (IOException e) {
             gui.showError("Error while sending text message");
@@ -95,15 +100,17 @@ public class SerializationClient implements TCPClient {
             try {
                 Message msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                    gui.addMessage(msg.getSender(), msg.getText());
+                    gui.addMessage(getTime(), msg.getSender(), msg.getText());
                 } else if (msg.getType() == MessageType.ADD_USER) {
                     model.addUser(msg.getText());
                     gui.updateUsers(model.getUsers());
-                    gui.showInfo("New user has connected to the chat");
+                    //gui.showInfo("User '" + msg.getText() + "' joined the chat!");
+                    gui.addNotification("User '" + msg.getText() + "' joined the chat!");
                 } else if (msg.getType() == MessageType.DELETE_USER) {
                     model.deleteUser(msg.getText());
                     gui.updateUsers(model.getUsers());
-                    gui.showInfo("User " + msg.getText() + " has disconnected");
+                    //gui.showInfo("User " + msg.getText() + " has disconnected");
+                    gui.addNotification("User '" + msg.getText() + "' left the chat");
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -121,17 +128,17 @@ public class SerializationClient implements TCPClient {
                 Message msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.REQUEST_USER_NAME) {
                     name = gui.getUserName();
-                    connection.sendMessage(new Message(name, name,  MessageType.REPLY_USER_NAME));
+                    connection.sendMessage(new Message(getTime(), name, name,  MessageType.REPLY_USER_NAME));
                 }
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");
                     name = gui.getUserName();
-                    connection.sendMessage(new Message(name, name,  MessageType.REPLY_USER_NAME));
+                    connection.sendMessage(new Message(getTime(), name, name,  MessageType.REPLY_USER_NAME));
                 }
                 if (msg.getType() == MessageType.NAME_ACCEPTED) {
-                    //model.addUser(msg.getText());
                     gui.showInfo("Name is accepted!");
                     model.setUsers(msg.getUsers());
+                    for (Message message : msg.getHistory()) gui.addMessage(getTime(), message.getSender(), message.getText());
                     break;
                 }
             }
@@ -142,5 +149,8 @@ public class SerializationClient implements TCPClient {
                 gui.updateUsers(model.getUsers());
             }
         }
+    }
+    private String getTime() {
+        return LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute();
     }
 }

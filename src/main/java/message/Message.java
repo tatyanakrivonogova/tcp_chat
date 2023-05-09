@@ -1,32 +1,33 @@
 package message;
 
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Message implements Serializable {
-    private final String senderMessage;
-    private final String textMessage;
+    private String dateTime;
+    private String senderMessage = "";
+    private String textMessage = "";
     private final MessageType typeMessage;
     private Set<String> users = null;
+    private ArrayList<Message> history = null;
 
-    public Message(String sender, String text, MessageType type) {
+    public Message(String dt, String sender, String text, MessageType type) {
+        dateTime = dt;
         senderMessage = sender;
         textMessage = text;
         typeMessage = type;
     }
 
     public Message(MessageType type) {
-        senderMessage = "";
-        textMessage = "";
         typeMessage = type;
     }
-    public Message(MessageType type, Set<String> _users) {
-        senderMessage = "";
-        textMessage = "";
+    public Message(MessageType type, Set<String> _users, ArrayList<Message> _history) {
         typeMessage = type;
         users = _users;
+        history = _history;
     }
+
     public String getSender() { return senderMessage; }
     public MessageType getType() {
         return typeMessage;
@@ -35,5 +36,6 @@ public class Message implements Serializable {
         return textMessage;
     }
     public Set<String> getUsers() { return users; }
+    public ArrayList<Message> getHistory() { return history; }
 
 }
