@@ -101,12 +101,10 @@ public class SerializationClient implements TCPClient {
                 } else if (msg.getType() == MessageType.ADD_USER) {
                     model.addUser(msg.getText());
                     gui.updateUsers(model.getUsers());
-                    //gui.showInfo("User '" + msg.getText() + "' joined the chat!");
                     gui.addNotification("User '" + msg.getText() + "' joined the chat!");
                 } else if (msg.getType() == MessageType.DELETE_USER) {
                     model.deleteUser(msg.getText());
                     gui.updateUsers(model.getUsers());
-                    //gui.showInfo("User " + msg.getText() + " has disconnected");
                     gui.addNotification("User '" + msg.getText() + "' left the chat");
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -129,8 +127,6 @@ public class SerializationClient implements TCPClient {
                 }
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");
-                    name = gui.getUserName();
-                    connection.sendMessage(new Message(getTime(), name, name,  MessageType.REPLY_USER_NAME));
                 }
                 if (msg.getType() == MessageType.NAME_ACCEPTED) {
                     gui.showInfo("Name is accepted!");

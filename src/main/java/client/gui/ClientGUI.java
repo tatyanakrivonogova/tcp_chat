@@ -4,7 +4,6 @@ import client.SerializationClient;
 import client.TCPClient;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
@@ -64,13 +63,13 @@ public class ClientGUI {
     }
     public void addMessage(String dt, String sender, String text) {
         if (name != null && Objects.equals(sender, name)) {
-            clientPanel.chat.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            //clientPanel.chat.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            clientPanel.chat.append("\t" + dt + " " + sender + " : " + text + "\n");
         } else {
-            clientPanel.chat.setAlignmentX(Component.LEFT_ALIGNMENT);
+            //clientPanel.chat.setAlignmentX(Component.LEFT_ALIGNMENT);
+            clientPanel.chat.append(dt + " " + sender + " : " + text + "\n");
         }
-        clientPanel.chat.append(dt + " " + sender + " : " + text + "\n");
         clientPanel.chat.setCaretPosition(clientPanel.chat.getDocument().getLength());
-        //clientPanel.chat.revalidate();
     }
     public void addNotification(String text) {
         clientPanel.chat.append(text + "\n");
@@ -98,18 +97,13 @@ public class ClientGUI {
     }
     public String getAddress() {
         while (true) {
-            String address = JOptionPane.showInputDialog(
-                    frame, "Type server's address",
-                    "Server address",
-                    JOptionPane.QUESTION_MESSAGE
-            );
+            String address = JOptionPane.showInputDialog(frame, "Type server's address",
+                    "Server address", JOptionPane.QUESTION_MESSAGE);
             try {
                 return address;
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(
-                        frame, "Error with typing address occurred",
-                        "Wrong address typed", JOptionPane.ERROR_MESSAGE
-                );
+                JOptionPane.showMessageDialog(frame, "Error with typing address occurred",
+                        "Wrong address typed", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
