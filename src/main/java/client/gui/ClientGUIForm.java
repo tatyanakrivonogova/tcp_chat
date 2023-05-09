@@ -19,9 +19,12 @@ public class ClientGUIForm {
     public JTextArea participants;
     private JButton connectButton;
     private JButton disconnectButton;
-    private JTextField IPAddressField;
     private JTextField portField;
     private JTextField message;
+    private JTextField ipAddressField;
+    private JTextField connectField;
+    private JPanel connectPanel;
+    private JPanel configPanel;
 
     public ClientGUIForm(ClientGUI _gui, TCPClient _client) {
         gui = _gui;
@@ -49,7 +52,11 @@ public class ClientGUIForm {
     }
 
     public void setIpAddress(InetAddress ip) {
-        IPAddressField.setText("IP address : " + ip);
+        ipAddressField.setText("IP address : " + ip);
+    }
+
+    public void setConnected(boolean value) {
+        connectField.setText(value ? "CONNECTED" : "DISCONNECTED");
     }
 
     {
@@ -98,20 +105,6 @@ public class ClientGUIForm {
         disconnectButton.setSelected(true);
         disconnectButton.setText("DISCONNECT");
         panel.add(disconnectButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        IPAddressField = new JTextField();
-        IPAddressField.setAutoscrolls(false);
-        IPAddressField.setBackground(new Color(-2514655));
-        IPAddressField.setEditable(false);
-        IPAddressField.setForeground(new Color(-16777216));
-        IPAddressField.setText("IP address : ");
-        panel.add(IPAddressField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        portField = new JTextField();
-        portField.setAutoscrolls(false);
-        portField.setBackground(new Color(-2514655));
-        portField.setEditable(false);
-        portField.setForeground(new Color(-16777216));
-        portField.setText("PORT : ");
-        panel.add(portField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         message = new JTextField();
         message.setBackground(new Color(-1));
         message.setEditable(true);
@@ -144,6 +137,38 @@ public class ClientGUIForm {
         participants.setMinimumSize(new Dimension(-1, -1));
         participants.setPreferredSize(new Dimension(150, 50));
         scrollPane2.setViewportView(participants);
+        configPanel = new JPanel();
+        configPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        configPanel.setBackground(new Color(-2514655));
+        panel.add(configPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        portField = new JTextField();
+        portField.setBackground(new Color(-2514655));
+        portField.setEditable(false);
+        Font portFieldFont = this.$$$getFont$$$("Arial Black", -1, 14, portField.getFont());
+        if (portFieldFont != null) portField.setFont(portFieldFont);
+        portField.setForeground(new Color(-16777216));
+        portField.setText("PORT : ");
+        configPanel.add(portField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        ipAddressField = new JTextField();
+        ipAddressField.setBackground(new Color(-2514655));
+        ipAddressField.setEditable(false);
+        Font ipAddressFieldFont = this.$$$getFont$$$("Arial Black", -1, 14, ipAddressField.getFont());
+        if (ipAddressFieldFont != null) ipAddressField.setFont(ipAddressFieldFont);
+        ipAddressField.setForeground(new Color(-16777216));
+        ipAddressField.setText("IP : ");
+        configPanel.add(ipAddressField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        connectPanel = new JPanel();
+        connectPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        connectPanel.setBackground(new Color(-2514655));
+        panel.add(connectPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        connectField = new JTextField();
+        connectField.setBackground(new Color(-2514655));
+        connectField.setEditable(false);
+        Font connectFieldFont = this.$$$getFont$$$("Arial Black", -1, 14, connectField.getFont());
+        if (connectFieldFont != null) connectField.setFont(connectFieldFont);
+        connectField.setForeground(new Color(-16777216));
+        connectField.setText("DISCONNECTED");
+        connectPanel.add(connectField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**

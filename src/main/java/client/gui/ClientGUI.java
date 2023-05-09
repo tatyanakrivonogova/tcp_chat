@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
-import java.util.Objects;
 import java.util.Set;
 
 public class ClientGUI {
@@ -45,6 +44,7 @@ public class ClientGUI {
     public void setIpAddress(InetAddress ip) {
         clientPanel.setIpAddress(ip);
     }
+    public void setConnected(boolean value) { clientPanel.setConnected(value); }
 
     public String getUserName() {
         String name = JOptionPane.showInputDialog(frame, "Enter your name:", JOptionPane.QUESTION_MESSAGE);
@@ -62,7 +62,7 @@ public class ClientGUI {
         JOptionPane.showMessageDialog(frame, text, "INFO", JOptionPane.INFORMATION_MESSAGE);
     }
     public void addMessage(String dt, String sender, String text) {
-        if (name != null && Objects.equals(sender, name)) {
+        if (sender.equals(name)) {
             //clientPanel.chat.setAlignmentX(Component.RIGHT_ALIGNMENT);
             clientPanel.chat.append("\t" + dt + " " + sender + " : " + text + "\n");
         } else {
@@ -80,7 +80,11 @@ public class ClientGUI {
         if (client.isConnected()) {
             sb.append("Participants:\n");
             for (String user : users) {
-                sb.append(user).append('\n');
+                if (user.equals(name)) {
+                    sb.append("YOU : ").append(user).append('\n');
+                } else {
+                    sb.append(user).append('\n');
+                }
             }
         }
         clientPanel.participants.setText(sb.toString());

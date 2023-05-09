@@ -28,6 +28,7 @@ public class SerializationClient implements TCPClient {
                     isConnected = true;
                     gui.setPort(port);
                     gui.setIpAddress(ipAddress);
+                    gui.setConnected(true);
                     gui.showInfo("Connected successfully!");
                     break;
                 }
@@ -63,6 +64,7 @@ public class SerializationClient implements TCPClient {
                 isConnected = false;
                 model.getUsers().clear();
                 gui.updateUsers(model.getUsers());
+                gui.setConnected(false);
             } else {
                 gui.showWarning("You have already disconnected");
             }
