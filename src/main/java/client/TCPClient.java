@@ -7,6 +7,6 @@ public interface TCPClient {
     boolean isConnected();
     void sendMessage(String msg);
     void receiveMessage();
-    void registrateNewUser();
+    void loginClient();
     void close();
 }

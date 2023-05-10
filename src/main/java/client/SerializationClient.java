@@ -48,7 +48,7 @@ public class SerializationClient implements TCPClient {
         gui = new ClientGUI(this);
         while (!isClosed) {
             if (isConnected) {
-                registrateNewUser();
+                loginClient();
                 gui.setName(name);
                 receiveMessage();
                 isConnected = false;
@@ -120,7 +120,7 @@ public class SerializationClient implements TCPClient {
     }
 
     @Override
-    public void registrateNewUser() {
+    public void loginClient() {
         while (true) {
             try {
                 Message msg = connection.receiveMessage();
@@ -128,10 +128,10 @@ public class SerializationClient implements TCPClient {
                     name = gui.getUserName();
                     connection.sendMessage(new Message(getTime(), name,  MessageType.REPLY_USER_NAME));
                 }
+                msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");
-                }
-                if (msg.getType() == MessageType.NAME_ACCEPTED) {
+                } else if (msg.getType() == MessageType.NAME_ACCEPTED) {
                     gui.showInfo("Name is accepted!");
                     model.setUsers(msg.getUsers());
                     for (Message message : msg.getHistory()) gui.addMessage(message.getTime(), message.getSender(), message.getText());

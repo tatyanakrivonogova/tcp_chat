@@ -6,7 +6,6 @@ import message.MessageType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import server.gui.ServerGUI;
 import server.model.ServerModel;
 
@@ -47,13 +46,13 @@ public class SerializationServer implements TCPServer {
                     connection.sendMessage(new Message(MessageType.REQUEST_USER_NAME));
                     Message reply = connection.receiveMessage();
                     String newName = reply.getText();
-                    if (reply.getType() == MessageType.REPLY_USER_NAME && !newName.isEmpty()) {
-                        if (model.getServerUsers().containsKey(newName)) {
+                    if (reply.getType() == MessageType.REPLY_USER_NAME) {
+                        if (newName.isEmpty() || model.getServerUsers().containsKey(newName)) {
                             connection.sendMessage(new Message(MessageType.NAME_NOT_AVAILABLE));
                         } else {
                             model.addUser(newName, connection);
                             connection.sendMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers(), model.getHistory()));
-                            broadcastMessage(new Message(DateTime.now().toString(), newName, newName, MessageType.ADD_USER));
+                            broadcastMessage(new Message("", newName, newName, MessageType.ADD_USER));
                             return newName;
                         }
                     }
@@ -72,10 +71,10 @@ public class SerializationServer implements TCPServer {
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
                         msg.setName(model.getName(connection));
                         model.addHistory(msg);
-                        broadcastMessage(new Message(DateTime.now().toString(), name, msg.getText(), MessageType.TEXT_MESSAGE));
+                        broadcastMessage(new Message(msg.getTime(), name, msg.getText(), MessageType.TEXT_MESSAGE));
                         logger.log(Level.INFO, "Message from " + name);
                     } else if (msg.getType() == MessageType.DISCONNECT_USER) {
-                        broadcastMessage(new Message(DateTime.now().toString(), name, name, MessageType.DELETE_USER));
+                        broadcastMessage(new Message(msg.getTime(), name, name, MessageType.DELETE_USER));
                         connection.close();
                         model.deleteUser(name);
                         gui.showInfo("User " + name + " left the chat");
