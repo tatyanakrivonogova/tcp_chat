@@ -4,6 +4,7 @@ package server.gui;
 import server.TCPServer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,8 +23,9 @@ public class ServerGUI {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                server.stop();
-                System.exit(0);
+                frame.dispose();
+                for (Frame f : Frame.getFrames()) f.dispose();
+                server.closeServer();
             }
         });
         frame.pack();
@@ -33,7 +35,7 @@ public class ServerGUI {
     }
     public int getPort() {
         while (true) {
-            String port = JOptionPane.showInputDialog(frame, "Enter server's port: ", JOptionPane.QUESTION_MESSAGE);
+            String port = JOptionPane.showInputDialog(frame, "Enter server's port: ", "2048");
             try {
                 return Integer.parseInt(port.trim());
             } catch (Exception e) {

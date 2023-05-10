@@ -8,4 +8,5 @@ public interface TCPServer {
     void stop();
     void acceptClient();
     void broadcastMessage(Message msg);
+    void closeServer();
 }

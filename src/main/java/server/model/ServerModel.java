@@ -6,13 +6,18 @@ import message.Message;
 import java.util.*;
 
 public class ServerModel {
-    private Map<String, Connection> serverUsers = new HashMap<>();
+    private final ArrayList<Thread> serverThreads = new ArrayList<>();
+    private final Map<String, Connection> serverUsers = new HashMap<>();
     private final ArrayList<Message> history = new ArrayList<>();
-    public void setServerUsers(Map<String, Connection> _serverUsers) {
-        serverUsers = _serverUsers;
-    }
     public Map<String, Connection> getServerUsers() {
         return serverUsers;
+    }
+    public ArrayList<Thread> getServerThreads() { return serverThreads; }
+    public String getName(Connection connection) {
+        for (Map.Entry<String, Connection> user : serverUsers.entrySet()) {
+            if (user.getValue() == connection) return user.getKey();
+        }
+        return "";
     }
     public Set<String> getSetOfUsers() {
         Set<String> users = new HashSet<>();
@@ -24,6 +29,7 @@ public class ServerModel {
     public void addUser(String name, Connection connection) {
         serverUsers.put(name, connection);
     }
+    public void addThread(Thread thread) { serverThreads.add(thread); }
     public void deleteUser(String name) {
         serverUsers.remove(name);
     }

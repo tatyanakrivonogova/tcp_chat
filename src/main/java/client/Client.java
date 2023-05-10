@@ -8,7 +8,7 @@ public class Client {
             SerializationClient client = new SerializationClient();
             client.run();
         } else if (Objects.equals(args[0], "xml")) {
-            System.out.println("bad");
+            System.out.println("xml");
         }
     }
 }

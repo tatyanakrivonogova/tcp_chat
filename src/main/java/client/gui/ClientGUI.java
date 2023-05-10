@@ -4,6 +4,7 @@ import client.SerializationClient;
 import client.TCPClient;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
@@ -29,7 +30,9 @@ public class ClientGUI {
                 if (client.isConnected()) {
                     client.disconnect();
                 }
-                System.exit(0);
+                frame.dispose();
+                for (Frame f : Frame.getFrames()) f.dispose();
+                client.close();
             }
         });
         frame.pack();
@@ -47,7 +50,7 @@ public class ClientGUI {
     public void setConnected(boolean value) { clientPanel.setConnected(value); }
 
     public String getUserName() {
-        String name = JOptionPane.showInputDialog(frame, "Enter your name:", JOptionPane.QUESTION_MESSAGE);
+        String name = JOptionPane.showInputDialog(frame, "Enter your name:", "");
         if (name == null) return "";
         name = (name.length() > NAME_LIMIT) ? name.substring(0, NAME_LIMIT) : name;
         return name;
@@ -63,10 +66,8 @@ public class ClientGUI {
     }
     public void addMessage(String dt, String sender, String text) {
         if (sender.equals(name)) {
-            //clientPanel.chat.setAlignmentX(Component.RIGHT_ALIGNMENT);
             clientPanel.chat.append("\t" + dt + " " + sender + " : " + text + "\n");
         } else {
-            //clientPanel.chat.setAlignmentX(Component.LEFT_ALIGNMENT);
             clientPanel.chat.append(dt + " " + sender + " : " + text + "\n");
         }
         clientPanel.chat.setCaretPosition(clientPanel.chat.getDocument().getLength());
@@ -91,7 +92,7 @@ public class ClientGUI {
     }
     public int getPort() {
         while (true) {
-            String port = JOptionPane.showInputDialog(frame, "Enter server's port: ", JOptionPane.QUESTION_MESSAGE);
+            String port = JOptionPane.showInputDialog(frame, "Enter server's port: ", "2048");
             try {
                 return Integer.parseInt(port.trim());
             } catch (Exception e) {
@@ -101,8 +102,7 @@ public class ClientGUI {
     }
     public String getAddress() {
         while (true) {
-            String address = JOptionPane.showInputDialog(frame, "Type server's address",
-                    "Server address", JOptionPane.QUESTION_MESSAGE);
+            String address = JOptionPane.showInputDialog(frame, "Enter server's address", "127.0.0.1");
             try {
                 return address;
             } catch (Exception e) {

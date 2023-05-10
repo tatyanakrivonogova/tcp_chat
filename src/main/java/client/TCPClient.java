@@ -8,4 +8,5 @@ public interface TCPClient {
     void sendMessage(String msg);
     void receiveMessage();
     void registrateNewUser();
+    void close();
 }

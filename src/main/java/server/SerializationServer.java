@@ -21,6 +21,7 @@ public class SerializationServer implements TCPServer {
     private ServerModel model;
     private ServerGUI gui;
     private volatile boolean isRunning = false;
+    private volatile boolean isClosed = false;
     private class ServerThread extends Thread {
         private final Socket socket;
         public ServerThread(Socket _socket) {
@@ -65,10 +66,11 @@ public class SerializationServer implements TCPServer {
             }
         }
         public void chatting(Connection connection, String name) {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Message msg = connection.receiveMessage();
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
+                        msg.setName(model.getName(connection));
                         model.addHistory(msg);
                         broadcastMessage(new Message(DateTime.now().toString(), name, msg.getText(), MessageType.TEXT_MESSAGE));
                         logger.log(Level.INFO, "Message from " + name);
@@ -84,7 +86,6 @@ public class SerializationServer implements TCPServer {
                     gui.showError("Error while chatting");
                     logger.log(Level.ERROR, "Error while chatting");
                     logger.log(Level.ERROR, e.getMessage());
-                    break;
                 }
             }
         }
@@ -93,13 +94,12 @@ public class SerializationServer implements TCPServer {
     public void run() {
         model = new ServerModel();
         gui = new ServerGUI(this);
-        while (true) {
+        while (!isClosed) {
             if (isRunning) {
                 acceptClient();
             }
         }
     }
-
     @Override
     public void start(int port) {
         if (!isRunning) {
@@ -141,22 +141,35 @@ public class SerializationServer implements TCPServer {
             gui.showWarning("Server has already stopped");
         }
     }
-
+    @Override
+    public void closeServer() {
+        try {
+            for (Map.Entry<String, Connection> user : model.getServerUsers().entrySet()) {
+                user.getValue().close();
+            }
+            for (Thread t : model.getServerThreads()) t.interrupt();
+            serverSocket.close();
+            isClosed = true;
+        } catch (Exception e) {
+            logger.log(Level.ERROR, "Error while closing server");
+            System.exit(-1);
+        }
+    }
     @Override
     public void acceptClient() {
         try {
             Socket newSocket = serverSocket.accept();
             ServerThread thread = new ServerThread(newSocket);
+            model.addThread(thread);
             thread.start();
         } catch (IOException e) {
-            if (isRunning) {
+            if (isRunning && !isClosed) {
                 gui.showError("Error while accepting new socket");
                 logger.log(Level.ERROR, "Error while accepting new socket");
                 logger.log(Level.ERROR, e.getMessage());
             }
         }
     }
-
     @Override
     public void broadcastMessage(Message msg) {
         for (Map.Entry<String, Connection> entry : model.getServerUsers().entrySet()) {
