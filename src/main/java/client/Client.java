@@ -7,8 +7,8 @@ public class Client {
         if (Objects.equals(args[0], "simple")) {
             SerializationClient client = new SerializationClient();
             client.run();
-        } else if (Objects.equals(args[0], "xml")) {
-            System.out.println("xml");
+        } else if (Objects.equals(args[0], "json")) {
+            System.out.println("json");
         }
     }
 }
