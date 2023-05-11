@@ -66,7 +66,7 @@ public class ClientGUI {
     }
     public void addMessage(String dt, String sender, String text) {
         if (sender.equals(name)) {
-            clientPanel.chat.append("\t" + dt + " " + sender + " : " + text + "\n");
+            clientPanel.chat.append("\t" + dt + " " + "YOU" + " : " + text + "\n");
         } else {
             clientPanel.chat.append(dt + " " + sender + " : " + text + "\n");
         }
