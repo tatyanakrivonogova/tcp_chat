@@ -2,11 +2,12 @@ package client;
 
 import client.gui.ClientGUI;
 import client.model.ClientModel;
+import com.google.gson.Gson;
 import message.*;
 
 import java.io.IOException;
 
-public class SerializationClient extends AbstractClient implements TCPClient {
+public class JsonClient extends AbstractClient implements TCPClient {
     @Override
     public void run() {
         model = new ClientModel();
@@ -24,7 +25,11 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     public void disconnect() {
         try {
             if (isConnected) {
-                connection.sendMessage(new Message(MessageType.DISCONNECT_USER));
+                Gson gson = new Gson();
+                Message message = new Message(MessageType.DISCONNECT_USER);
+                String jsonObject = gson.toJson(message);
+                connection.sendJsonMessage(jsonObject);
+                //connection.sendMessage(new Message(MessageType.DISCONNECT_USER));
                 isConnected = false;
                 model.getUsers().clear();
                 gui.updateUsers(model.getUsers());
@@ -43,7 +48,11 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     @Override
     public void sendMessage(String msg) {
         try {
-            connection.sendMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
+            Gson gson = new Gson();
+            Message message = new Message(getTime(), msg, MessageType.TEXT_MESSAGE);
+            String jsonObject = gson.toJson(message);
+            connection.sendJsonMessage(jsonObject);
+            //connection.sendMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
         }
         catch (IOException e) {
             gui.showError("Error while sending text message");
@@ -56,7 +65,10 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     public void receiveMessage() {
         while (isConnected) {
             try {
-                Message msg = connection.receiveMessage();
+                //Message msg = connection.receiveMessage();
+                Gson gson = new Gson();
+                String jsonObject = connection.receiveJsonMessage();
+                Message msg = gson.fromJson(jsonObject, Message.class);
 
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
                     gui.addMessage(msg.getTime(), msg.getSender(), msg.getText());
@@ -82,13 +94,21 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     public void loginClient() {
         while (true) {
             try {
-                Message msg = connection.receiveMessage();
+                //Message msg = connection.receiveMessage();
+                Gson gson = new Gson();
+                String jsonObject = connection.receiveJsonMessage();
+                Message msg = gson.fromJson(jsonObject, Message.class);
 
                 if (msg.getType() == MessageType.REQUEST_USER_NAME) {
                     name = gui.getUserName();
-                    connection.sendMessage(new Message(getTime(), name,  MessageType.REPLY_USER_NAME));
+                    //connection.sendMessage(new Message(getTime(), name,  MessageType.REPLY_USER_NAME));
+                    Message message = new Message(getTime(), name,  MessageType.REPLY_USER_NAME);
+                    jsonObject = gson.toJson(message);
+                    connection.sendJsonMessage(jsonObject);
                 }
-                msg = connection.receiveMessage();
+                //msg = connection.receiveMessage();
+                jsonObject = connection.receiveJsonMessage();
+                msg = gson.fromJson(jsonObject, Message.class);
 
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");

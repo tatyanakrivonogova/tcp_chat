@@ -9,6 +9,8 @@ public class Server {
             server.run();
         } else if (Objects.equals(args[0], "json")) {
             System.out.println("json");
+            AbstractServer server = new JsonServer();
+            server.run();
         }
     }
 }

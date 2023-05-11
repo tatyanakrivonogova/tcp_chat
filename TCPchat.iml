@@ -14,6 +14,7 @@
     <orderEntry type="library" name="intellij.forms_rt" level="project" />
     <orderEntry type="library" name="apache.logging.log4j.api" level="project" />
     <orderEntry type="library" name="apache.logging.log4j.core" level="project" />
+    <orderEntry type="library" name="joda.time" level="project" />
     <orderEntry type="library" name="Maven: com.intellij:forms_rt:7.0.3" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-commons:3.0" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-tree:3.0" level="project" />
@@ -22,6 +23,6 @@
     <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.19.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.19.0" level="project" />
-    <orderEntry type="library" name="joda.time" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.10.1" level="project" />
   </component>
 </module>

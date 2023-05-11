@@ -29,6 +29,18 @@ public class Connection implements AutoCloseable {
             return (Message) ois.readObject();
         }
     }
+    public void sendJsonMessage(String jsonMessage) throws IOException {
+        synchronized (oos) {
+            oos.writeObject(jsonMessage);
+            oos.flush();
+        }
+    }
+
+    public String receiveJsonMessage() throws IOException, ClassNotFoundException {
+        synchronized (ois) {
+            return (String) ois.readObject();
+        }
+    }
 
     @Override
     public void close() throws Exception {

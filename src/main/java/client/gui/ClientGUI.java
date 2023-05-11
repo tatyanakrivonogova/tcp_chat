@@ -1,6 +1,6 @@
 package client.gui;
 
-import client.SerializationClient;
+import client.AbstractClient;
 import client.TCPClient;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class ClientGUI {
     private final JFrame frame = new JFrame("My chat");
     private final ClientGUIForm clientPanel;
 
-    public ClientGUI(SerializationClient _client) {
+    public ClientGUI(AbstractClient _client) {
         client = _client;
         clientPanel = new ClientGUIForm(this, client);
 
