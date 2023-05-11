@@ -21,8 +21,9 @@ public class SerializationServer implements TCPServer {
     private ServerGUI gui;
     private volatile boolean isRunning = false;
     private volatile boolean isClosed = false;
-    private class ServerThread extends Thread {
+    public class ServerThread extends Thread {
         private final Socket socket;
+        private String name;
         public ServerThread(Socket _socket) {
             socket = _socket;
         }
@@ -30,7 +31,7 @@ public class SerializationServer implements TCPServer {
         public void run() {
             try {
                 Connection connection = new Connection(socket);
-                String name = addClient(connection);
+                name = addClient(connection);
                 gui.showInfo("User " + name + " joined the chat");
                 logger.log(Level.INFO, "User " + name + " joined the chat");
                 chatting(connection, name);
@@ -65,7 +66,7 @@ public class SerializationServer implements TCPServer {
             }
         }
         public void chatting(Connection connection, String name) {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!isClosed) {
                 try {
                     Message msg = connection.receiveMessage();
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
@@ -88,6 +89,7 @@ public class SerializationServer implements TCPServer {
                 }
             }
         }
+        public String getThreadName() { return name; }
     }
     @Override
     public void run() {

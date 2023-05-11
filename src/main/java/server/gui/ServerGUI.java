@@ -43,7 +43,6 @@ public class ServerGUI {
             }
         }
     }
-
     public void showInfo(String text) {
         serverPanel.notifications.append(text + '\n');
     }

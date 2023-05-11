@@ -50,10 +50,10 @@ public class ClientGUI {
     public void setConnected(boolean value) { clientPanel.setConnected(value); }
 
     public String getUserName() {
-        String name = JOptionPane.showInputDialog(frame, "Enter your name:", "");
-        if (name == null) return "";
-        name = (name.length() > NAME_LIMIT) ? name.substring(0, NAME_LIMIT) : name;
-        return name;
+        String name = JOptionPane.showInputDialog(frame, "Enter your name (maximum of 30 characters):", "");
+        if (name == null || name.trim().length() > NAME_LIMIT) return "";
+        //name = (name.length() > NAME_LIMIT) ? name.substring(0, NAME_LIMIT) : name;
+        return name.trim();
     }
     public void showError(String text) {
         JOptionPane.showMessageDialog(frame, text, "ERROR", JOptionPane.ERROR_MESSAGE);

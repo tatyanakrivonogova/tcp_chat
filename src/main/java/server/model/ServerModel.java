@@ -2,17 +2,18 @@ package server.model;
 
 import connection.Connection;
 import message.Message;
+import server.SerializationServer;
 
 import java.util.*;
 
 public class ServerModel {
-    private final ArrayList<Thread> serverThreads = new ArrayList<>();
+    private final ArrayList<SerializationServer.ServerThread> serverThreads = new ArrayList<>();
     private final Map<String, Connection> serverUsers = new HashMap<>();
     private final ArrayList<Message> history = new ArrayList<>();
     public Map<String, Connection> getServerUsers() {
         return serverUsers;
     }
-    public ArrayList<Thread> getServerThreads() { return serverThreads; }
+    public ArrayList<SerializationServer.ServerThread> getServerThreads() { return serverThreads; }
     public String getName(Connection connection) {
         for (Map.Entry<String, Connection> user : serverUsers.entrySet()) {
             if (user.getValue() == connection) return user.getKey();
@@ -29,9 +30,10 @@ public class ServerModel {
     public void addUser(String name, Connection connection) {
         serverUsers.put(name, connection);
     }
-    public void addThread(Thread thread) { serverThreads.add(thread); }
+    public void addThread(SerializationServer.ServerThread thread) { serverThreads.add(thread); }
     public void deleteUser(String name) {
         serverUsers.remove(name);
+        serverThreads.removeIf(t -> t.getThreadName().equals(name));
     }
     public ArrayList<Message> getHistory() { return history; }
     public void addHistory(Message msg) {

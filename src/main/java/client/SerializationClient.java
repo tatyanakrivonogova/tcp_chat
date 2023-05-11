@@ -51,7 +51,7 @@ public class SerializationClient implements TCPClient {
                 loginClient();
                 gui.setName(name);
                 receiveMessage();
-                isConnected = false;
+                //isConnected = false;
             }
         }
     }
@@ -84,7 +84,6 @@ public class SerializationClient implements TCPClient {
     @Override
     public void sendMessage(String msg) {
         try {
-            //connection.sendMessage(new Message(getTime(), name, msg, MessageType.TEXT_MESSAGE));
             connection.sendMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
         }
         catch (IOException e) {
@@ -111,8 +110,8 @@ public class SerializationClient implements TCPClient {
                     gui.addNotification("User '" + msg.getText() + "' left the chat");
                 }
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-                gui.showError("Error while receiving message");
+                //e.printStackTrace();
+                gui.showError("Connection with server is lost");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
             }
