@@ -38,7 +38,7 @@ public class ClientGUIForm {
         });
         message.addActionListener(e -> {
             if (client.isConnected()) {
-                if (!message.getText().isEmpty() && !message.getText().trim().isEmpty()) ClientGUIForm.this.client.sendMessage(message.getText().trim());
+                if (!message.getText().isEmpty() && !message.getText().trim().isEmpty()) ClientGUIForm.this.client.sendMessageFromClient(message.getText().trim());
             } else {
                 gui.showWarning("Connection is not established");
             }

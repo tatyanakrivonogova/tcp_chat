@@ -5,7 +5,7 @@ public interface TCPClient {
     void run();
     void disconnect();
     boolean isConnected();
-    void sendMessage(String msg);
+    void sendMessageFromClient(String msg);
     void chatting();
     void loginClient();
     void close();

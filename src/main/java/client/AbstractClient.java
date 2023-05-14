@@ -56,7 +56,7 @@ abstract public class AbstractClient implements TCPClient {
         return isConnected;
     }
     @Override
-    abstract public void sendMessage(String msg);
+    abstract public void sendMessageFromClient(String msg);
     @Override
     abstract public void chatting();
     @Override

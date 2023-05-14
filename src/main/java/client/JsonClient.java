@@ -45,7 +45,7 @@ public class JsonClient extends AbstractClient implements TCPClient {
     }
 
     @Override
-    public void sendMessage(String msg) {
+    public void sendMessageFromClient(String msg) {
         try {
             connection.sendJsonMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
         }

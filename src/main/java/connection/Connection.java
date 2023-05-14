@@ -38,7 +38,6 @@ public class Connection implements AutoCloseable {
             String jsonMessage = gson.toJson(message);
 
             int length = jsonMessage.length();
-            //System.out.println("length " + length);
             byte[] bytes = new byte[4];
             for (int i = 0; i < 4; ++i) {
                 bytes[4-i-1] = (byte) (length & 0xFF);
@@ -53,13 +52,11 @@ public class Connection implements AutoCloseable {
     public Message receiveJsonMessage() throws IOException, ClassNotFoundException {
         synchronized (is) {
             Gson gson = new Gson();
-            //String jsonObject = connection.receiveJsonMessage();
 
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
             byte[] data = new byte[4];
             nRead = is.read(data, 0, 4);
-            //System.out.println("get " + Arrays.toString(data));
             if (nRead != 4) throw new IOException("Wrong format of json message");
             int dataSize = 0;
             for (int i = 0; i < 4; ++i) {
@@ -78,6 +75,8 @@ public class Connection implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        os.close();
+        is.close();
         ois.close();
         oos.close();
         s.close();

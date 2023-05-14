@@ -45,7 +45,7 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     }
 
     @Override
-    public void sendMessage(String msg) {
+    public void sendMessageFromClient(String msg) {
         try {
             connection.sendMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
         }
