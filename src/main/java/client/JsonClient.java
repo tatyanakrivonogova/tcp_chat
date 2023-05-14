@@ -6,6 +6,9 @@ import com.google.gson.Gson;
 import message.*;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class JsonClient extends AbstractClient implements TCPClient {
     @Override
@@ -63,6 +66,23 @@ public class JsonClient extends AbstractClient implements TCPClient {
 
     @Override
     public void receiveMessage() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            final Gson gson = new Gson();
+            @Override
+            public void run() {
+                try {
+                    Message message = new Message(MessageType.PING);
+                    String jsonObject = gson.toJson(message);
+                    connection.sendJsonMessage(jsonObject);
+                    System.out.println("ping from client");
+                } catch (IOException e) {
+                    timer.cancel();
+                    isConnected = false;
+                    System.out.println("Error while ping");
+                }
+            }
+        }, 0, 1000);
         while (isConnected) {
             try {
                 //Message msg = connection.receiveMessage();
@@ -81,9 +101,18 @@ public class JsonClient extends AbstractClient implements TCPClient {
                     gui.updateUsers(model.getUsers());
                     gui.addNotification("User '" + msg.getText() + "' left the chat");
                 }
+            } catch (SocketTimeoutException e) {
+                gui.showError("Timeout exceeded, closing connection");
+                disconnect();
+                timer.cancel();
+                try {
+                    connection.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } catch (IOException | ClassNotFoundException e) {
                 //e.printStackTrace();
-                gui.showError("Connection with server is lost");
+                gui.showError("Connection with server has lost");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
             }

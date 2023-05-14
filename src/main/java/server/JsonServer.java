@@ -8,7 +8,10 @@ import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class JsonServer extends AbstractServer implements TCPServer {
     public JsonServer(int timeout, int historySize) {
@@ -58,6 +61,22 @@ public class JsonServer extends AbstractServer implements TCPServer {
         }
         @Override
         public void chatting(Connection connection, String name) {
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                final Gson gson = new Gson();
+                @Override
+                public void run() {
+                    try {
+                        Message message = new Message(MessageType.PING);
+                        String jsonObject = gson.toJson(message);
+                        connection.sendJsonMessage(jsonObject);
+                        System.out.println("ping from server to " + name);
+                    } catch (IOException e) {
+                        logger.log(Level.ERROR, "Error while ping");
+                        cancel();
+                    }
+                }
+            }, 0, 1000);
             while (!isClosed) {
                 try {
                     //Message msg = connection.receiveMessage();
@@ -75,12 +94,26 @@ public class JsonServer extends AbstractServer implements TCPServer {
                         model.deleteUser(name);
                         gui.showInfo("User " + name + " left the chat");
                         logger.log(Level.INFO, "User " + name + " left the chat");
+                        timer.cancel();
                         break;
                     }
+                } catch (SocketTimeoutException e) {
+                    gui.showError("Timeout exceeded, closing connection");
+                    logger.log(Level.ERROR, "Timeout exceeded");
+                    timer.cancel();
+                    model.deleteUser(name);
+                    try {
+                        connection.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        logger.log(Level.ERROR, "Error while closing connection");
+                    }
+                    break;
                 } catch (Exception e) {
                     gui.showError("Error while chatting");
                     logger.log(Level.ERROR, "Error while chatting");
                     logger.log(Level.ERROR, e.getMessage());
+                    timer.cancel();
                     break;
                 }
             }
@@ -90,6 +123,7 @@ public class JsonServer extends AbstractServer implements TCPServer {
     public void acceptClient() {
         try {
             Socket newSocket = serverSocket.accept();
+            newSocket.setSoTimeout(timeout);
             ServerThread thread = new ServerThread(newSocket);
             model.addThread(thread);
             thread.start();

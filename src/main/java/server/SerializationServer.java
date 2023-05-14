@@ -82,9 +82,16 @@ public class SerializationServer extends AbstractServer implements TCPServer {
                     gui.showError("Timeout exceeded, closing connection");
                     logger.log(Level.ERROR, "Timeout exceeded");
                     timer.cancel();
+                    model.deleteUser(name);
+                    try {
+                        connection.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        logger.log(Level.ERROR, "Error while closing connection");
+                    }
                     break;
                 } catch (Exception e) {
-                    gui.showError("Connection has lost");
+                    gui.showError("Error while chatting");
                     logger.log(Level.ERROR, "Error while chatting");
                     logger.log(Level.ERROR, e.getMessage());
                     timer.cancel();

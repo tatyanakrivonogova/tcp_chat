@@ -14,6 +14,7 @@ public class Server {
             System.out.println("Impossible to read config file");
             return;
         }
+        System.out.println(configuration.getType());
         if (Objects.equals(configuration.getType(), "serialization")) {
             AbstractServer server = new SerializationServer(configuration.getTimeout(), configuration.getHistorySize());
             server.run();

@@ -65,6 +65,8 @@ public class SerializationClient extends AbstractClient implements TCPClient {
                     System.out.println("ping from client");
                 } catch (IOException e) {
                     timer.cancel();
+                    isConnected = false;
+                    System.out.println("Error while ping");
                 }
             }
         }, 0, 1000);
@@ -85,10 +87,17 @@ public class SerializationClient extends AbstractClient implements TCPClient {
             } catch (SocketTimeoutException e) {
                 gui.showError("Timeout exceeded, closing connection");
                 disconnect();
+                timer.cancel();
+                try {
+                    connection.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } catch (IOException | ClassNotFoundException e) {
-                gui.showError("Connection with server is lost");
+                gui.showError("Connection with server has lost");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
+                timer.cancel();
             }
         }
     }
