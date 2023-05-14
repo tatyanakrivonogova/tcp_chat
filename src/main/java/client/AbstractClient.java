@@ -26,7 +26,9 @@ abstract public class AbstractClient implements TCPClient {
             while (true) {
                 try {
                     InetAddress ipAddress = InetAddress.getByName(gui.getAddress());
+                    System.out.println(ipAddress);
                     int port = gui.getPort();
+                    System.out.println(port);
                     Socket s = new Socket(ipAddress, port);
                     connection = new Connection(s);
                     isConnected = true;
@@ -56,7 +58,7 @@ abstract public class AbstractClient implements TCPClient {
     @Override
     abstract public void sendMessage(String msg);
     @Override
-    abstract public void receiveMessage();
+    abstract public void chatting();
     @Override
     abstract public void loginClient();
     protected String getTime() {

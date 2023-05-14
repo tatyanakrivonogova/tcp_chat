@@ -6,7 +6,7 @@ public interface TCPClient {
     void disconnect();
     boolean isConnected();
     void sendMessage(String msg);
-    void receiveMessage();
+    void chatting();
     void loginClient();
     void close();
 }

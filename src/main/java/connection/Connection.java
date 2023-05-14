@@ -1,5 +1,6 @@
 package connection;
 
+import com.google.gson.Gson;
 import message.Message;
 
 import java.io.*;
@@ -31,8 +32,11 @@ public class Connection implements AutoCloseable {
             return (Message) ois.readObject();
         }
     }
-    public void sendJsonMessage(String jsonMessage) throws IOException {
+    public void sendJsonMessage(Message message) throws IOException {
         synchronized (os) {
+            Gson gson = new Gson();
+            String jsonMessage = gson.toJson(message);
+
             int length = jsonMessage.length();
             //System.out.println("length " + length);
             byte[] bytes = new byte[4];
@@ -46,8 +50,11 @@ public class Connection implements AutoCloseable {
         }
     }
 
-    public String receiveJsonMessage() throws IOException, ClassNotFoundException {
+    public Message receiveJsonMessage() throws IOException, ClassNotFoundException {
         synchronized (is) {
+            Gson gson = new Gson();
+            //String jsonObject = connection.receiveJsonMessage();
+
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
             byte[] data = new byte[4];
@@ -64,7 +71,8 @@ public class Connection implements AutoCloseable {
             if (nRead != dataSize) throw new IOException("Wrong format of json message");
             buffer.write(data, 0, nRead);
             buffer.flush();
-            return buffer.toString();
+
+            return gson.fromJson(buffer.toString(), Message.class);
         }
     }
 

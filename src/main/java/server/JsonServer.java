@@ -25,28 +25,16 @@ public class JsonServer extends AbstractServer implements TCPServer {
         public String addClient(Connection connection) {
             while (true) {
                 try {
-//                    connection.sendMessage(new Message(MessageType.REQUEST_USER_NAME));
-                    Gson gson = new Gson();
-                    Message message = new Message(MessageType.REQUEST_USER_NAME);
-                    String jsonObject = gson.toJson(message);
-                    connection.sendJsonMessage(jsonObject);
-
-                    jsonObject = connection.receiveJsonMessage();
-                    Message reply = gson.fromJson(jsonObject, Message.class);
+                    connection.sendJsonMessage(new Message(MessageType.REQUEST_USER_NAME));
+                    Message reply = connection.receiveJsonMessage();
 
                     String newName = reply.getText();
                     if (reply.getType() == MessageType.REPLY_USER_NAME) {
                         if (newName.isEmpty() || model.getServerUsers().containsKey(newName)) {
-                            //connection.sendMessage(new Message(MessageType.NAME_NOT_AVAILABLE));
-                            message = new Message(MessageType.NAME_NOT_AVAILABLE);
-                            jsonObject = gson.toJson(message);
-                            connection.sendJsonMessage(jsonObject);
+                            connection.sendJsonMessage(new Message(MessageType.NAME_NOT_AVAILABLE));
                         } else {
                             model.addUser(newName, connection);
-                            //connection.sendMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers(), model.getHistory()));
-                            message = new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers(), model.getHistory());
-                            jsonObject = gson.toJson(message);
-                            connection.sendJsonMessage(jsonObject);
+                            connection.sendJsonMessage(new Message(MessageType.NAME_ACCEPTED, model.getSetOfUsers(), model.getHistory()));
                             broadcastMessage(new Message("", newName, newName, MessageType.ADD_USER));
                             return newName;
                         }
@@ -67,9 +55,7 @@ public class JsonServer extends AbstractServer implements TCPServer {
                 @Override
                 public void run() {
                     try {
-                        Message message = new Message(MessageType.PING);
-                        String jsonObject = gson.toJson(message);
-                        connection.sendJsonMessage(jsonObject);
+                        connection.sendJsonMessage(new Message(MessageType.PING));
                         System.out.println("ping from server to " + name);
                     } catch (IOException e) {
                         logger.log(Level.ERROR, "Error while ping");
@@ -79,10 +65,7 @@ public class JsonServer extends AbstractServer implements TCPServer {
             }, 0, 1000);
             while (!isClosed) {
                 try {
-                    //Message msg = connection.receiveMessage();
-                    Gson gson = new Gson();
-                    String jsonObject = connection.receiveJsonMessage();
-                    Message msg = gson.fromJson(jsonObject, Message.class);
+                    Message msg = connection.receiveJsonMessage();
                     if (msg.getType() == MessageType.TEXT_MESSAGE) {
                         msg.setName(model.getName(connection));
                         model.addHistory(msg);
@@ -111,6 +94,7 @@ public class JsonServer extends AbstractServer implements TCPServer {
                     break;
                 } catch (Exception e) {
                     gui.showError("Error while chatting");
+                    e.printStackTrace();
                     logger.log(Level.ERROR, "Error while chatting");
                     logger.log(Level.ERROR, e.getMessage());
                     timer.cancel();
@@ -139,10 +123,7 @@ public class JsonServer extends AbstractServer implements TCPServer {
     public void broadcastMessage(Message msg) {
         for (Map.Entry<String, Connection> entry : model.getServerUsers().entrySet()) {
             try {
-                //entry.getValue().sendMessage(msg);
-                Gson gson = new Gson();
-                String jsonObject = gson.toJson(msg);
-                entry.getValue().sendJsonMessage(jsonObject);
+                entry.getValue().sendJsonMessage(msg);
             } catch (IOException e) {
                 gui.showError("Error while broadcasting");
                 logger.log(Level.ERROR, "Error while broadcasting");

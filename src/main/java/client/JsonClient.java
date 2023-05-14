@@ -2,7 +2,6 @@ package client;
 
 import client.gui.ClientGUI;
 import client.model.ClientModel;
-import com.google.gson.Gson;
 import message.*;
 
 import java.io.IOException;
@@ -21,9 +20,7 @@ public class JsonClient extends AbstractClient implements TCPClient {
         while (!isClosed) {
             if (isConnected) {
                 loginClient();
-                gui.setName(name);
-                receiveMessage();
-                //isConnected = false;
+                chatting();
             }
         }
     }
@@ -31,11 +28,7 @@ public class JsonClient extends AbstractClient implements TCPClient {
     public void disconnect() {
         try {
             if (isConnected) {
-                Gson gson = new Gson();
-                Message message = new Message(MessageType.DISCONNECT_USER);
-                String jsonObject = gson.toJson(message);
-                connection.sendJsonMessage(jsonObject);
-                //connection.sendMessage(new Message(MessageType.DISCONNECT_USER));
+                connection.sendJsonMessage(new Message(MessageType.DISCONNECT_USER));
                 isConnected = false;
                 model.getUsers().clear();
                 gui.updateUsers(model.getUsers());
@@ -54,11 +47,7 @@ public class JsonClient extends AbstractClient implements TCPClient {
     @Override
     public void sendMessage(String msg) {
         try {
-            Gson gson = new Gson();
-            Message message = new Message(getTime(), msg, MessageType.TEXT_MESSAGE);
-            String jsonObject = gson.toJson(message);
-            connection.sendJsonMessage(jsonObject);
-            //connection.sendMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
+            connection.sendJsonMessage(new Message(getTime(), msg, MessageType.TEXT_MESSAGE));
         }
         catch (IOException e) {
             gui.showError("Error while sending text message");
@@ -68,16 +57,13 @@ public class JsonClient extends AbstractClient implements TCPClient {
     }
 
     @Override
-    public void receiveMessage() {
+    public void chatting() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
-            final Gson gson = new Gson();
             @Override
             public void run() {
                 try {
-                    Message message = new Message(MessageType.PING);
-                    String jsonObject = gson.toJson(message);
-                    connection.sendJsonMessage(jsonObject);
+                    connection.sendJsonMessage(new Message(MessageType.PING));
                     System.out.println("ping from client");
                 } catch (IOException e) {
                     timer.cancel();
@@ -88,10 +74,7 @@ public class JsonClient extends AbstractClient implements TCPClient {
         }, 0, 1000);
         while (isConnected) {
             try {
-                //Message msg = connection.receiveMessage();
-                Gson gson = new Gson();
-                String jsonObject = connection.receiveJsonMessage();
-                Message msg = gson.fromJson(jsonObject, Message.class);
+                Message msg = connection.receiveJsonMessage();
 
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
                     model.addMessage(msg);
@@ -115,7 +98,6 @@ public class JsonClient extends AbstractClient implements TCPClient {
                     ex.printStackTrace();
                 }
             } catch (IOException | ClassNotFoundException e) {
-                //e.printStackTrace();
                 gui.showError("Connection with server has lost");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
@@ -127,26 +109,19 @@ public class JsonClient extends AbstractClient implements TCPClient {
     public void loginClient() {
         while (true) {
             try {
-                //Message msg = connection.receiveMessage();
-                Gson gson = new Gson();
-                String jsonObject = connection.receiveJsonMessage();
-                Message msg = gson.fromJson(jsonObject, Message.class);
+                Message msg = connection.receiveJsonMessage();
 
                 if (msg.getType() == MessageType.REQUEST_USER_NAME) {
                     name = gui.getUserName();
-                    //connection.sendMessage(new Message(getTime(), name,  MessageType.REPLY_USER_NAME));
-                    Message message = new Message(getTime(), name,  MessageType.REPLY_USER_NAME);
-                    jsonObject = gson.toJson(message);
-                    connection.sendJsonMessage(jsonObject);
+                    connection.sendJsonMessage(new Message(getTime(), name,  MessageType.REPLY_USER_NAME));
                 }
-                //msg = connection.receiveMessage();
-                jsonObject = connection.receiveJsonMessage();
-                msg = gson.fromJson(jsonObject, Message.class);
+                msg = connection.receiveJsonMessage();
 
                 if (msg.getType() == MessageType.NAME_NOT_AVAILABLE) {
                     gui.showWarning("This name is not available. Enter another one...");
                 } else if (msg.getType() == MessageType.NAME_ACCEPTED) {
                     gui.showInfo("Name is accepted!");
+                    gui.setName(name);
                     model.setUsers(msg.getUsers());
                     model.setChatMessages(msg.getHistory());
                     gui.updateChat(model.getChatMessages());

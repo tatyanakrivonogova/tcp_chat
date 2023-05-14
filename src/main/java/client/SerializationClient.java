@@ -20,8 +20,7 @@ public class SerializationClient extends AbstractClient implements TCPClient {
         while (!isClosed) {
             if (isConnected) {
                 loginClient();
-//                gui.setName(name);
-                receiveMessage();
+                chatting();
             }
         }
     }
@@ -58,7 +57,7 @@ public class SerializationClient extends AbstractClient implements TCPClient {
     }
 
     @Override
-    public void receiveMessage() {
+    public void chatting() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
