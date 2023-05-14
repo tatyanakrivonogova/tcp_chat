@@ -131,6 +131,7 @@ public class SerializationClient extends AbstractClient implements TCPClient {
             }
             catch (IOException | ClassNotFoundException e) {
                 gui.showError("Problems with connection");
+                e.printStackTrace();
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
             }
