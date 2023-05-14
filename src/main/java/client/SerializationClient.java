@@ -10,14 +10,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SerializationClient extends AbstractClient implements TCPClient {
+    public SerializationClient(int historySize) {
+        super(historySize);
+    }
     @Override
     public void run() {
-        model = new ClientModel();
+        model = new ClientModel(historySize);
         gui = new ClientGUI(this);
         while (!isClosed) {
             if (isConnected) {
                 loginClient();
-                gui.setName(name);
+//                gui.setName(name);
                 receiveMessage();
             }
         }
@@ -74,7 +77,8 @@ public class SerializationClient extends AbstractClient implements TCPClient {
             try {
                 Message msg = connection.receiveMessage();
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                    gui.addMessage(msg.getTime(), msg.getSender(), msg.getText());
+                    model.addMessage(msg);
+                    gui.updateChat(model.getChatMessages());
                 } else if (msg.getType() == MessageType.ADD_USER) {
                     model.addUser(msg.getText());
                     gui.updateUsers(model.getUsers());
@@ -118,8 +122,10 @@ public class SerializationClient extends AbstractClient implements TCPClient {
                     gui.showWarning("This name is not available. Enter another one...");
                 } else if (msg.getType() == MessageType.NAME_ACCEPTED) {
                     gui.showInfo("Name is accepted!");
+                    gui.setName(name);
                     model.setUsers(msg.getUsers());
-                    for (Message message : msg.getHistory()) gui.addMessage(message.getTime(), message.getSender(), message.getText());
+                    model.setChatMessages(msg.getHistory());
+                    gui.updateChat(model.getChatMessages());
                     break;
                 }
             }

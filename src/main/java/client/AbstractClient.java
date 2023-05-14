@@ -12,10 +12,14 @@ import java.time.LocalDateTime;
 abstract public class AbstractClient implements TCPClient {
     protected volatile boolean isConnected = false;
     protected volatile boolean isClosed = false;
+    protected final int historySize;
     protected String name;
     protected Connection connection;
     protected ClientModel model;
     protected ClientGUI gui;
+    public AbstractClient(int _historySize) {
+        historySize = _historySize;
+    }
     @Override
     public void connect() {
         if (!isConnected) {

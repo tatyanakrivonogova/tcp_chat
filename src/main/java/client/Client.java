@@ -16,10 +16,10 @@ public class Client {
         }
         System.out.println(configuration.getType());
         if (Objects.equals(configuration.getType(), "serialization")) {
-            AbstractClient client = new SerializationClient();
+            AbstractClient client = new SerializationClient(configuration.getHistorySize());
             client.run();
         } else if (Objects.equals(configuration.getType(), "json")) {
-            AbstractClient client = new JsonClient();
+            AbstractClient client = new JsonClient(configuration.getHistorySize());
             client.run();
         }
     }

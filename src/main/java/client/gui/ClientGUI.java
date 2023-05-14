@@ -2,12 +2,14 @@ package client.gui;
 
 import client.AbstractClient;
 import client.TCPClient;
+import message.Message;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class ClientGUI {
@@ -64,11 +66,14 @@ public class ClientGUI {
     public void showInfo(String text) {
         JOptionPane.showMessageDialog(frame, text, "INFO", JOptionPane.INFORMATION_MESSAGE);
     }
-    public void addMessage(String dt, String sender, String text) {
-        if (sender.equals(name)) {
-            clientPanel.chat.append("\t" + dt + " " + "YOU" + " : " + text + "\n");
-        } else {
-            clientPanel.chat.append(dt + " " + sender + " : " + text + "\n");
+    public void updateChat(ArrayList<Message> messages) {
+        clientPanel.chat.setText("");
+        for (Message msg : messages) {
+            if (msg.getSender().equals(name)) {
+                clientPanel.chat.append("\t" + msg.getTime() + " " + "YOU" + " : " + msg.getText() + "\n");
+            } else {
+                clientPanel.chat.append(msg.getTime() + " " + msg.getSender() + " : " + msg.getText() + "\n");
+            }
         }
         clientPanel.chat.setCaretPosition(clientPanel.chat.getDocument().getLength());
     }

@@ -11,9 +11,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class JsonClient extends AbstractClient implements TCPClient {
+    public JsonClient(int historySize) {
+        super(historySize);
+    }
     @Override
     public void run() {
-        model = new ClientModel();
+        model = new ClientModel(historySize);
         gui = new ClientGUI(this);
         while (!isClosed) {
             if (isConnected) {
@@ -91,7 +94,8 @@ public class JsonClient extends AbstractClient implements TCPClient {
                 Message msg = gson.fromJson(jsonObject, Message.class);
 
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
-                    gui.addMessage(msg.getTime(), msg.getSender(), msg.getText());
+                    model.addMessage(msg);
+                    gui.updateChat(model.getChatMessages());
                 } else if (msg.getType() == MessageType.ADD_USER) {
                     model.addUser(msg.getText());
                     gui.updateUsers(model.getUsers());
@@ -144,7 +148,8 @@ public class JsonClient extends AbstractClient implements TCPClient {
                 } else if (msg.getType() == MessageType.NAME_ACCEPTED) {
                     gui.showInfo("Name is accepted!");
                     model.setUsers(msg.getUsers());
-                    for (Message message : msg.getHistory()) gui.addMessage(message.getTime(), message.getSender(), message.getText());
+                    model.setChatMessages(msg.getHistory());
+                    gui.updateChat(model.getChatMessages());
                     break;
                 }
             }
