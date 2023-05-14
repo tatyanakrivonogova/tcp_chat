@@ -15,11 +15,17 @@ import java.util.Map;
 
 public abstract class AbstractServer implements TCPServer {
     protected static final Logger logger = LogManager.getLogger(SerializationServer.class);
+    protected int timeout;
+    protected int historySize;
     protected ServerSocket serverSocket;
     protected ServerModel model;
     protected ServerGUI gui;
     protected volatile boolean isRunning = false;
     protected volatile boolean isClosed = false;
+    public AbstractServer(int _timeout, int _historySize) {
+        timeout = _timeout;
+        historySize = _historySize;
+    }
     public abstract class ServerThread extends Thread {
         protected final Socket socket;
         protected String name;
@@ -46,7 +52,7 @@ public abstract class AbstractServer implements TCPServer {
     }
     @Override
     public void run() {
-        model = new ServerModel();
+        model = new ServerModel(historySize);
         gui = new ServerGUI(this);
         while (!isClosed) {
             if (isRunning) {

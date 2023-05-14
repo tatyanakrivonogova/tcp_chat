@@ -9,8 +9,7 @@ public class Configuration {
     private final String configFile;
     private String type;
     private int historySize;
-    private boolean loggerStatus;
-
+    private int timeout;
     public Configuration(String _configFile) throws IOException {
         configFile = _configFile;
         readConfig();
@@ -22,9 +21,9 @@ public class Configuration {
 
         type = properties.getProperty("type");
         historySize = Integer.parseInt(properties.getProperty("history_size"));
-        loggerStatus = Boolean.parseBoolean(properties.getProperty("logger"));
+        timeout = Integer.parseInt(properties.getProperty("timeout"));
     }
     public String getType() { return type; }
     public int getHistorySize() { return historySize; }
-    public boolean getLoggerStatus() { return loggerStatus; }
+    public int getTimeout() { return timeout; }
 }

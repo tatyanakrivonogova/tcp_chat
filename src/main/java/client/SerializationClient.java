@@ -5,6 +5,9 @@ import client.model.ClientModel;
 import message.*;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SerializationClient extends AbstractClient implements TCPClient {
     @Override
@@ -16,7 +19,6 @@ public class SerializationClient extends AbstractClient implements TCPClient {
                 loginClient();
                 gui.setName(name);
                 receiveMessage();
-                //isConnected = false;
             }
         }
     }
@@ -54,10 +56,21 @@ public class SerializationClient extends AbstractClient implements TCPClient {
 
     @Override
     public void receiveMessage() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    connection.sendMessage(new Message(MessageType.PING));
+                    System.out.println("ping from client");
+                } catch (IOException e) {
+                    timer.cancel();
+                }
+            }
+        }, 0, 1000);
         while (isConnected) {
             try {
                 Message msg = connection.receiveMessage();
-
                 if (msg.getType() == MessageType.TEXT_MESSAGE) {
                     gui.addMessage(msg.getTime(), msg.getSender(), msg.getText());
                 } else if (msg.getType() == MessageType.ADD_USER) {
@@ -69,8 +82,10 @@ public class SerializationClient extends AbstractClient implements TCPClient {
                     gui.updateUsers(model.getUsers());
                     gui.addNotification("User '" + msg.getText() + "' left the chat");
                 }
+            } catch (SocketTimeoutException e) {
+                gui.showError("Timeout exceeded, closing connection");
+                disconnect();
             } catch (IOException | ClassNotFoundException e) {
-                //e.printStackTrace();
                 gui.showError("Connection with server is lost");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());
@@ -100,7 +115,6 @@ public class SerializationClient extends AbstractClient implements TCPClient {
                 }
             }
             catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
                 gui.showError("Problems with connection");
                 isConnected = false;
                 gui.updateUsers(model.getUsers());

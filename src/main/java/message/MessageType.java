@@ -10,5 +10,6 @@ public enum MessageType implements Serializable {
     NAME_ACCEPTED,
     DISCONNECT_USER,
     ADD_USER,
-    DELETE_USER;
+    DELETE_USER,
+    PING
 }

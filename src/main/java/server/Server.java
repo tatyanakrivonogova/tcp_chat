@@ -15,10 +15,10 @@ public class Server {
             return;
         }
         if (Objects.equals(configuration.getType(), "serialization")) {
-            AbstractServer server = new SerializationServer();
+            AbstractServer server = new SerializationServer(configuration.getTimeout(), configuration.getHistorySize());
             server.run();
         } else if (Objects.equals(configuration.getType(), "json")) {
-            AbstractServer server = new JsonServer();
+            AbstractServer server = new JsonServer(configuration.getTimeout(), configuration.getHistorySize());
             server.run();
         }
     }

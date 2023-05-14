@@ -7,6 +7,7 @@ import server.AbstractServer;
 import java.util.*;
 
 public class ServerModel {
+    private final int historySize;
     private final ArrayList<AbstractServer.ServerThread> serverThreads = new ArrayList<>();
     private final Map<String, Connection> serverUsers = new HashMap<>();
     private final ArrayList<Message> history = new ArrayList<>();
@@ -14,6 +15,9 @@ public class ServerModel {
         return serverUsers;
     }
     public ArrayList<AbstractServer.ServerThread> getServerThreads() { return serverThreads; }
+    public ServerModel(int _historySize) {
+        historySize = _historySize;
+    }
     public String getName(Connection connection) {
         for (Map.Entry<String, Connection> user : serverUsers.entrySet()) {
             if (user.getValue() == connection) return user.getKey();
@@ -37,7 +41,7 @@ public class ServerModel {
     }
     public ArrayList<Message> getHistory() { return history; }
     public void addHistory(Message msg) {
-        if (history.size() == 5) history.remove(0);
+        if (history.size() == historySize) history.remove(0);
         history.add(msg);
     }
 }

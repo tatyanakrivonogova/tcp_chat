@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.util.Map;
 
 public class JsonServer extends AbstractServer implements TCPServer {
+    public JsonServer(int timeout, int historySize) {
+        super(timeout, historySize);
+    }
     public class ServerThread extends AbstractServer.ServerThread {
         public ServerThread(Socket _socket) {
             super(_socket);
