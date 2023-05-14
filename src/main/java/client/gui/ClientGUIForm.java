@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.net.InetAddress;
 import java.util.Locale;
 
 public class ClientGUIForm {
@@ -51,7 +50,7 @@ public class ClientGUIForm {
         portField.setText("PORT : " + port);
     }
 
-    public void setIpAddress(InetAddress ip) {
+    public void setIpAddress(String ip) {
         ipAddressField.setText("IP address : " + ip);
     }
 

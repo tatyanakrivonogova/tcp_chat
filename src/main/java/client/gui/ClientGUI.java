@@ -47,7 +47,7 @@ public class ClientGUI {
         clientPanel.setPort(port);
     }
     public void setIpAddress(InetAddress ip) {
-        clientPanel.setIpAddress(ip);
+        clientPanel.setIpAddress(ip.toString().substring(1));
     }
     public void setConnected(boolean value) { clientPanel.setConnected(value); }
 
