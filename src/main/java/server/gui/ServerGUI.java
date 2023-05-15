@@ -1,6 +1,5 @@
 package server.gui;
 
-
 import server.TCPServer;
 
 import javax.swing.*;

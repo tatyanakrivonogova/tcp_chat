@@ -1,12 +1,13 @@
 package server;
 
 import configuration.Configuration;
+import connection.ConnectionFactory;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class Server {
     public static void main(String ... args) {
+        ConnectionFactory.getInstance();
         Configuration configuration;
         try {
             configuration = new Configuration("config.properties");
@@ -15,12 +16,7 @@ public class Server {
             return;
         }
         System.out.println(configuration.getType());
-        if (Objects.equals(configuration.getType(), "serialization")) {
-            AbstractServer server = new SerializationServer(configuration.getTimeout(), configuration.getHistorySize());
-            server.run();
-        } else if (Objects.equals(configuration.getType(), "json")) {
-            AbstractServer server = new JsonServer(configuration.getTimeout(), configuration.getHistorySize());
-            server.run();
-        }
+        ChatServer server = new ChatServer(configuration.getType(), configuration.getTimeout(), configuration.getHistorySize());
+        server.run();
     }
 }

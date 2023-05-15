@@ -1,6 +1,6 @@
 package client.gui;
 
-import client.AbstractClient;
+import client.ChatClient;
 import client.TCPClient;
 import message.Message;
 
@@ -19,7 +19,7 @@ public class ClientGUI {
     private final JFrame frame = new JFrame("My chat");
     private final ClientGUIForm clientPanel;
 
-    public ClientGUI(AbstractClient _client) {
+    public ClientGUI(ChatClient _client) {
         client = _client;
         clientPanel = new ClientGUIForm(this, client);
 

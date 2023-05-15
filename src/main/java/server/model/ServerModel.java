@@ -2,19 +2,19 @@ package server.model;
 
 import connection.Connection;
 import message.Message;
-import server.AbstractServer;
+import server.ChatServer;
 
 import java.util.*;
 
 public class ServerModel {
     private final int historySize;
-    private final ArrayList<AbstractServer.ServerThread> serverThreads = new ArrayList<>();
+    private final ArrayList<ChatServer.ServerThread> serverThreads = new ArrayList<>();
     private final Map<String, Connection> serverUsers = new HashMap<>();
     private final ArrayList<Message> history = new ArrayList<>();
     public Map<String, Connection> getServerUsers() {
         return serverUsers;
     }
-    public ArrayList<AbstractServer.ServerThread> getServerThreads() { return serverThreads; }
+    public ArrayList<ChatServer.ServerThread> getServerThreads() { return serverThreads; }
     public ServerModel(int _historySize) {
         historySize = _historySize;
     }
@@ -34,7 +34,7 @@ public class ServerModel {
     public void addUser(String name, Connection connection) {
         serverUsers.put(name, connection);
     }
-    public void addThread(AbstractServer.ServerThread thread) { serverThreads.add(thread); }
+    public void addThread(ChatServer.ServerThread thread) { serverThreads.add(thread); }
     public void deleteUser(String name) {
         serverUsers.remove(name);
         serverThreads.removeIf(t -> t.getThreadName().equals(name));
