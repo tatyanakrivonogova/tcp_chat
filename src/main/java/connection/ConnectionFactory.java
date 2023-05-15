@@ -5,7 +5,7 @@ import java.net.Socket;
 
 public class ConnectionFactory {
     private static ConnectionFactory INSTANCE = null;
-    public static Connection createConnection(String type, Socket s) throws IOException {
+    public static Connection createConnection(String type, Socket s) throws IllegalArgumentException, IOException {
         if (type.equalsIgnoreCase("serialization")) {
             return new SerializationConnection(s);
         } else if (type.equalsIgnoreCase("json")) {

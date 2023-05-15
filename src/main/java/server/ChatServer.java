@@ -41,12 +41,16 @@ public class ChatServer implements TCPServer {
         }
         public void run() {
             try {
-                //Connection connection = new Connection(socket);
                 Connection connection = ConnectionFactory.createConnection(type, socket);
                 name = addClient(connection);
                 gui.showInfo("User " + name + " joined the chat");
                 logger.log(Level.INFO, "User " + name + " joined the chat");
                 chatting(connection, name);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                logger.log(Level.ERROR, "Error while creating connection by factory");
+                logger.log(Level.ERROR, e.getMessage());
+                gui.showError("Problem with creating connection. Try again...");
             } catch (IOException e) {
                 gui.showError("Error while adding new user");
                 logger.log(Level.ERROR, "Error while adding new user");

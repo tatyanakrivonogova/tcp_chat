@@ -37,7 +37,6 @@ public class ChatClient implements TCPClient {
                     int port = gui.getPort();
                     System.out.println(port);
                     Socket s = new Socket(ipAddress, port);
-                    //connection = new SerializationConnection(s);
                     connection = ConnectionFactory.createConnection(type, s);
                     isConnected = true;
                     gui.setPort(port);
@@ -45,6 +44,10 @@ public class ChatClient implements TCPClient {
                     gui.setConnected(true);
                     gui.showInfo("Connected successfully!");
                     break;
+                }
+                catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    gui.showWarning("Problem with creating connection. Try again...");
                 }
                 catch (IOException e) {
                     gui.showWarning("Impossible to connect to this port. Enter another port...");
