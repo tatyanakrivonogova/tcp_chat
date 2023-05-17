@@ -33,9 +33,9 @@ public class ChatClient implements TCPClient {
             while (true) {
                 try {
                     InetAddress ipAddress = InetAddress.getByName(gui.getAddress());
-                    System.out.println(ipAddress);
+                    //System.out.println(ipAddress);
                     int port = gui.getPort();
-                    System.out.println(port);
+                    //System.out.println(port);
                     Socket s = new Socket(ipAddress, port);
                     connection = ConnectionFactory.createConnection(type, s);
                     isConnected = true;
